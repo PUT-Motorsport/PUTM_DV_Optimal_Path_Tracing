@@ -65,27 +65,32 @@ class CubicSpline:
 
         delta_x = arg - self.x[index]
 
-        #assert(delta_x >= 0)
+        assert(delta_x >= 0)
 
         return (self.a[index] + self.b[index] * delta_x + self.c[index] * delta_x ** 2 + self.d[index] * delta_x ** 3)
+    
+    def get_range(self, arg_array):
+        spline_index = [i for i, v in enumerate(self.x) if v > arg_array[0]][0] - 1
+
+        if spline_index < 0:
+            spline_index = 0
+
+        result = np.zeros(*arg_array.shape)
+
+        for index, value in enumerate(arg_array):
+            if value > self.x[spline_index + 1]:
+                spline_index += 1
+                assert(spline_index < len(self.b))
+
+            ref_x = self.x[spline_index]
+            delta_x = value - ref_x
+            assert(delta_x >= 0)
+            result[index] = (self.a[spline_index] + self.b[spline_index] * delta_x + \
+                self.c[spline_index] * delta_x ** 2 + self.d[spline_index] * delta_x ** 3)
+
+        return result
 
 if __name__ == '__main__':
-    # x = np.arange(0, 15, 0.7)
-    # y = np.random.randn(*x.shape) * 10
-
-    # spline = CubicSpline(x.tolist(), y.tolist())
-
-    # xNew = np.arange(0, 13.99, 0.01)
-    # spline_values = np.empty(*xNew.shape)
-
-    # for index, item in enumerate(xNew):
-    #     spline_values[index] = spline.get(item)
-
-    # plt.scatter(x, y)
-    # plt.plot(xNew, spline_values)
-
-    # plt.show()
-
     #generate x with random increments
 
     increments = np.random.rand(30)
@@ -108,5 +113,8 @@ if __name__ == '__main__':
     for index, item in enumerate(xNew):
         spline_values[index] = spline.get(item)
 
+    spline_val = spline.get_range(xNew)
+
     plt.plot(xNew, spline_values)
+    plt.plot(xNew, spline_val)
     plt.show()

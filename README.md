@@ -10,7 +10,7 @@ An optimal path spline (*exact representation tbd*).
 
 ### Current progress
 
-![Current progress](Docs/images/current_progress.png)
+![Current progress](Docs/Images/current_progress.png)
 
 ### Spline algorithm used
 

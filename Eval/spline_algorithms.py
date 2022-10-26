@@ -134,8 +134,11 @@ axis[1, 1].grid()
 
 t1 = time.time()
 
-left_param = np.zeros(*cones_left_x.shape)
-right_param = np.zeros(*cones_right_x.shape)
+left_param = np.empty(*cones_left_x.shape)
+right_param = np.empty(*cones_right_x.shape)
+
+left_param[0] = 0
+right_param[0] = 0
 
 for index in range(1, len(left_param)):
     left_param[index] = left_param[index - 1]
@@ -152,13 +155,15 @@ right_y_spline = splines.CubicSpline(right_param, cones_right_y)
 left_x_spline = splines.CubicSpline(left_param, cones_left_x)
 left_y_spline = splines.CubicSpline(left_param, cones_left_y)
 
-t_plot_left = np.arange(0, max(left_param), 0.01)
-t_plot_right = np.arange(0, max(right_param), 0.01)
+t_plot_left = np.arange(0, max(left_param), 0.1)
+t_plot_right = np.arange(0, max(right_param), 0.1)
 
 restored_x_left = np.empty(*t_plot_left.shape)
 restored_y_left = np.empty(*t_plot_left.shape)
 restored_x_right = np.empty(*t_plot_right.shape)
 restored_y_right = np.empty(*t_plot_right.shape)
+
+t5 = time.time()
 
 for index, value in enumerate(t_plot_left):
     restored_x_left[index] = left_x_spline.get(value)
@@ -167,6 +172,8 @@ for index, value in enumerate(t_plot_left):
 for index, value in enumerate(t_plot_right):
     restored_x_right[index] = right_x_spline.get(value)
     restored_y_right[index] = right_y_spline.get(value)
+
+print(f'Restoring the values cost {time.time() - t5} s')
 
 t2 = time.time()
 
