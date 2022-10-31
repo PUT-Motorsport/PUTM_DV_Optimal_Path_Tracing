@@ -58,14 +58,14 @@ class CubicSpline:
             self.d[j] = (self.c[j + 1] - self.c[j]) / (3 * h[j])
 
     def get(self, arg: float) -> float:
-        index = [i for i, v in enumerate(self.x) if v > arg][0] - 1
+        index = [i for i, v in enumerate(self.x) if v >= arg][0] - 1
 
         if index < 0:
             index = 0
 
         delta_x = arg - self.x[index]
 
-        assert(delta_x >= 0)
+        #assert(delta_x >= 0)
 
         return (self.a[index] + self.b[index] * delta_x + self.c[index] * delta_x ** 2 + self.d[index] * delta_x ** 3)
     
@@ -84,7 +84,7 @@ class CubicSpline:
 
             ref_x = self.x[spline_index]
             delta_x = value - ref_x
-            assert(delta_x >= 0)
+            #assert(delta_x >= 0)
             result[index] = (self.a[spline_index] + self.b[spline_index] * delta_x + \
                 self.c[spline_index] * delta_x ** 2 + self.d[spline_index] * delta_x ** 3)
 

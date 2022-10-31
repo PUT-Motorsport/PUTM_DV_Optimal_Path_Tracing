@@ -30,9 +30,12 @@ def generate():
         #approximate_track_length_difference = math.sqrt((x_middle[index] - x_middle[index - 1])**2 + \
         #    (y_middle[index] - y_middle[index - 1])**2) + math.sqrt((x_middle[(index + 1) % len(x_middle)] - \
         #    x_middle[index])**2 + (y_middle[(index + 1) % len(x_middle)] - y_middle[index])**2)
-
-        derivative = (y_middle[(index + 1) % len(y_middle)] - y_middle[index]) / (x_middle[(index + 1) % len(x_middle)] - x_middle[index])
         
+        if x_middle[(index + 1) % len(x_middle)] != x_middle[index]:
+            derivative = (y_middle[(index + 1) % len(y_middle)] - y_middle[index]) / (x_middle[(index + 1) % len(x_middle)] - x_middle[index])
+        else:
+            from sys import float_info
+            derivative = float_info.max
         if derivative != 0:
             parallel_slope = (-1) / derivative
         else:
