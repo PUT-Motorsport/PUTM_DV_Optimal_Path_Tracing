@@ -6,6 +6,10 @@ import math
 import generate_track
 import splines
 
+"""
+The code for a discarded idea of using same-indices points (despite the offsets) to find the centerline. Averages two points.
+"""
+
 fig, axis = plt.subplots(2, 2)
 
 cones_left_x, cones_left_y, cones_right_x, cones_right_y = generate_track.generate()
@@ -90,6 +94,7 @@ for index in range(1, len(right_param)):
         (cones_right_y[index] - cones_right_y[index - 1])**2)
 
 track_length_increment = int(max(max(left_param), max(right_param))) * 4
+print(track_length_increment)
 
 left_points = np.linspace(0, max(left_param), track_length_increment)
 right_points = np.linspace(0, max(right_param), track_length_increment)
@@ -122,7 +127,9 @@ for index in range(len(centerline_x)):
     Pa = (right_x_spline.get(right_points[index]), right_y_spline.get(right_points[index]))
     Pb = (right_x_spline.get(right_points[index - interval]), right_y_spline.get(right_points[index - interval]))
     Pc = (left_x_spline.get(left_points[index]), left_y_spline.get(left_points[index]))
-
+    assert(Pa != Pb)
+    assert(Pa != Pc)
+    assert(Pb != Pc)
     tangent_x_Pc = left_x_spline.get(left_points[index]) - left_x_spline.get(left_points[index - 1]) / (track_length_increment)
     tangent_y_Pc = left_y_spline.get(left_points[index]) - left_x_spline.get(left_points[index - 1]) / track_length_increment
 

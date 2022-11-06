@@ -4,11 +4,12 @@ import pandas as pd
 import math
 
 """
-Testing the track bounds recovery algorithms
+Testing the track bounds recovery algorithms.
+Spline interpolation works best when parametrized by L2 distance between points
 """
 
 from os import getcwd
-df = pd.read_csv(getcwd() + '/Eval/tracks/berlin_2018.csv')
+df = pd.read_csv(getcwd() + '/tracks/berlin_2018.csv')
 
 x_middle = df['x_m'].to_numpy()
 y_middle = df['y_m'].to_numpy()
@@ -96,11 +97,11 @@ axis[1, 0].grid()
 
 import splines
 
-import time #bemchmark
+import time  # benchmark
 t1 = time.time()
 
 # parametrize the spline using integers
-assert(len(cones_right_x) == len(cones_right_y))
+assert(len(cones_right_x) == len(cones_right_y))  # todo: condition may not always hold
 assert(len(cones_left_x) == len(cones_left_y))
 
 
@@ -110,16 +111,11 @@ y_spline_left = splines.CubicSpline(t, cones_left_y)
 x_spline_right = splines.CubicSpline(t, cones_right_x)
 y_spline_right = splines.CubicSpline(t, cones_right_y)
 
-t_plot = np.arange(0, max(t), 0.1)
-restored_x_left = np.empty(*t_plot.shape)
-restored_y_left = np.empty(*t_plot.shape)
-restored_x_right = np.empty(*t_plot.shape)
-restored_y_right = np.empty(*t_plot.shape)
-for index, value in enumerate(t_plot):
-    restored_x_left[index] = x_spline_left.get(value)
-    restored_y_left[index] = y_spline_left.get(value)
-    restored_x_right[index] = x_spline_right.get(value)
-    restored_y_right[index] = y_spline_right.get(value)
+t_plot = np.arange(0, max(t), 0.01)
+restored_x_left = x_spline_left.get_range(t_plot)
+restored_y_left = y_spline_left.get_range(t_plot)
+restored_x_right = x_spline_right.get_range(t_plot)
+restored_y_right = y_spline_right.get_range(t_plot)
 
 t2 = time.time()
 
@@ -158,20 +154,12 @@ left_y_spline = splines.CubicSpline(left_param, cones_left_y)
 t_plot_left = np.arange(0, max(left_param), 0.1)
 t_plot_right = np.arange(0, max(right_param), 0.1)
 
-restored_x_left = np.empty(*t_plot_left.shape)
-restored_y_left = np.empty(*t_plot_left.shape)
-restored_x_right = np.empty(*t_plot_right.shape)
-restored_y_right = np.empty(*t_plot_right.shape)
+restored_x_left = left_x_spline.get_range(t_plot_left)
+restored_y_left = left_y_spline.get_range(t_plot_left)
+restored_x_right = right_x_spline.get_range(t_plot_right)
+restored_y_right = right_y_spline.get_range(t_plot_right)
 
 t5 = time.time()
-
-for index, value in enumerate(t_plot_left):
-    restored_x_left[index] = left_x_spline.get(value)
-    restored_y_left[index] = left_y_spline.get(value)
-
-for index, value in enumerate(t_plot_right):
-    restored_x_right[index] = right_x_spline.get(value)
-    restored_y_right[index] = right_y_spline.get(value)
 
 print(f'Restoring the values cost {time.time() - t5} s')
 

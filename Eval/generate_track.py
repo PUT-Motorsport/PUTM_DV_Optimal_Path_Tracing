@@ -1,12 +1,14 @@
 import numpy as np
 import pandas as pd
+
 """
+Loads the Berlin Deep Racing 2018 tracks. Restores sides and generates random cones.
 Returns a tuple of x_left, y_left, x_right, y_right cone coordinates
 """
 
 def generate():
     from os import getcwd
-    df = pd.read_csv(getcwd() + '/Eval/tracks/berlin_2018.csv')
+    df = pd.read_csv(getcwd() + '/tracks/berlin_2018.csv')
 
     x_middle = df['x_m'].to_numpy()
     y_middle = df['y_m'].to_numpy()
@@ -80,3 +82,10 @@ def generate():
     cones_right_y = y_right[random_indexes_right]
 
     return cones_left_x, cones_left_y, cones_right_x, cones_right_y
+
+
+def get_track_centerline():
+    from os import getcwd
+    df = pd.read_csv(getcwd() + '/tracks/berlin_2018.csv')
+
+    return [df['x_m'].to_numpy(), df['y_m'].to_numpy()]

@@ -9,6 +9,7 @@ http://en.wikipedia.org/w/index.php?title=Spline_%28mathematics%29&oldid=2882880
 
 from typing import List
 
+
 class CubicSpline:
     def __init__(self, x : List[float], y: List[float]) -> None:
         self.x = x
@@ -90,8 +91,9 @@ class CubicSpline:
 
         return result
 
+
 if __name__ == '__main__':
-    #generate x with random increments
+    # generate x with random increments
 
     increments = np.random.rand(30)
     x = np.empty(*increments.shape)
