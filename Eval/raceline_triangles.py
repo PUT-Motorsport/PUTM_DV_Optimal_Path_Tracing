@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 import math
 import generate_track
 import splines
-import utility_fncs
+import utility_fcn
 
 """
 The code for a discarded idea of using same-indices points (despite the offsets) to find the centerline. Uses triangles' 

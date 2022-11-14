@@ -83,7 +83,6 @@ def generate():
 
     return cones_left_x, cones_left_y, cones_right_x, cones_right_y
 
-
 def get_track_centerline():
     from os import getcwd
     df = pd.read_csv(getcwd() + '/tracks/berlin_2018.csv')
