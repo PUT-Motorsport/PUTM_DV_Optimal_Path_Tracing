@@ -107,7 +107,10 @@ def get_centerline(interpolated_points_count: int):
 
 
 if __name__ == '__main__':
-    x, y, left_width, right_width = get_centerline(2000)
+    from time import time
+    t1 = time()
+    x, y, left_width, right_width = get_centerline(1000)
     plt.grid()
     plt.plot(x, y)
+    plt.title(f"{time() - t1}")
     plt.show()

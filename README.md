@@ -8,6 +8,10 @@ The goal of this set of algorithms is to decide the optimal path basing on the t
 **Output:**
 An optimal path spline (*exact representation tbd*).
 
+# Node flowchart
+
+![Flowchart](Docs/Images/optimal_path.drawio.png)
+
 ### Current progress
 
 ![Current progress](Docs/Images/current_progress.png)
