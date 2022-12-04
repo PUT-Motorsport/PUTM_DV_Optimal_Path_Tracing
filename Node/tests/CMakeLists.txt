@@ -1,0 +1,10 @@
+cmake_minimum_required(VERSION 3.20)
+project(package_opt_tests)
+set(CMAKE_CXX_STANDARD_REQUIRED 20)
+set(CMAKE_CXX_STANDARD 20)
+
+add_compile_options(-Wall -Wextra -Weffc++ -pedantic)
+add_executable(package_opt_tests main.cpp ../package_opt/src/callbacks.cpp ../package_opt/src/config.hpp)
+cmake_path(GET CMAKE_CURRENT_LIST_DIR PARENT_PATH package_path)
+include_directories(package_opt_tests "${package_path}/package_opt/src")
+message(STATUS "Parent path: ${package_path}/src")
