@@ -1,6 +1,13 @@
 #include <vector>
 #include "mocks/ros_mocks.hpp"
 #include "callbacks.h"
+#include "track_loader.hpp"
+
+/*
+ * This file links the Node code with mocks and (will) run tests to evaluate the node performance
+ * */
+
+ros::Publisher optimal_path_publisher;
 
 int main(int argc, char ** argv) {
   //Load data from a test source and put it through the algorithm
@@ -15,7 +22,7 @@ int main(int argc, char ** argv) {
       .cones_right_y = cones_right_y
   };
 
-    opt::on_cones_received_callback(cones);
+  opt::on_cones_received_callback(cones);
 
   return 0;
 }

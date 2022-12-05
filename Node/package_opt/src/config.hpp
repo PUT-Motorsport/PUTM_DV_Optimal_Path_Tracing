@@ -1,7 +1,14 @@
 #pragma once
 
+//All configurations and numerical constants can be found in this file
+
 namespace opt::config{
 
-    constexpr auto track_discretisation_interval{15};
+    constexpr auto track_discretization_interval{15};   //todo: find optimal value
+
+    constexpr auto track_bounds_search_narrowing_heuristic{40};
+    //this is used to narrow the search for the closest point on the other side; it assumes that the closest point
+    // must be somewhere in <value - heuristic, value + heuristic>
+
 
 }   //namespace opt::config
