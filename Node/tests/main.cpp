@@ -11,18 +11,14 @@ ros::Publisher optimal_path_publisher;
 
 int main(int argc, char ** argv) {
   //Load data from a test source and put it through the algorithm
-  std::vector<double> cones_left_x {1.0, 2.0, 3.0, 4.0};
-  std::vector<double> cones_left_y {2.0, 3.0, 4.0, 5.0};
-  std::vector<double> cones_right_x {3.0, 4.0, 5.0, 6.0};
-  std::vector<double> cones_right_y {4.0, 5.0, 6.0, 7.0};
-  package_opt::Cones::ConstPtr cones{
-      .cones_left_x = cones_left_x,
-      .cones_left_y = cones_left_y,
-      .cones_right_x = cones_right_x,
-      .cones_right_y = cones_right_y
-  };
 
-  opt::on_cones_received_callback(cones);
+  std::vector<std::string> track_files{package_opt::testing::find_all_track_files()};
+
+  for (const auto &track_file_name : track_files) {
+      package_opt::Cones::ConstPtr cones{package_opt::testing::load_track_file(track_file_name)};
+      opt::on_cones_received_callback(cones);
+
+  }
 
   return 0;
 }

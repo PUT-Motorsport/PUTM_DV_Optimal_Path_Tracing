@@ -154,7 +154,7 @@ namespace opt::spline {
         const auto index = get_index(arg);
         const T delta_x{arg - spline_fragments[index].x};
 
-        auto& fragment = spline_fragments[index];
+        constexpr auto& fragment = spline_fragments[index];
         return 3 * fragment.d * std::pow(delta_x, 2) + 2 * fragment.c * delta_x + fragment.b;
     }
 
@@ -164,7 +164,7 @@ namespace opt::spline {
         const auto index = get_index(arg);
         const T delta_x{arg - spline_fragments[index].x};
 
-        auto& fragment = spline_fragments[index];
+        constexpr auto& fragment = spline_fragments[index];
         return 6 * fragment.d * delta_x + 2 * fragment.c;
     }
 

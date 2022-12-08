@@ -1,10 +1,12 @@
 #pragma once
 
 #include "mocks/ros_mocks.hpp"
+#include <cassert>
 #include <fstream>
 #include <vector>
 #include <string>
 #include <filesystem>
+#include <iostream>
 /*
  * Code to load tracks from .csv's into four vectors of cone positions
  * */
@@ -24,11 +26,48 @@ namespace package_opt::testing {
         return csvFiles;
     }
 
+    namespace {
+        std::vector<std::string> split_csv_line(std::string const & line) {
+            std::stringstream stream(line);
+            std::vector<std::string> parsed_line;
+            while (stream.good()) {
+                std::string substring;
+                std::getline(stream, substring, ',');
+                parsed_line.emplace_back(std::move(substring));
+            }
+            return parsed_line;
+        }
+        double string_to_double(std::string const &str) {
+            std::size_t len{};
+            double result = std::stod(str, &len);
+            if (len == 0) {
+                std::cerr << "Bad string parsing. Str: " << str << std::endl;
+            }
+            return result;
+        }
+    }
+
     package_opt::Cones::ConstPtr load_track_file(std::string const &filename) {
         //this method expects the file to contain four rows with left_x, left_y, right_x, right_y positions
         //one line of column headers is also expected
         std::fstream file;
         file.open(filename);
+        std::string line;
+        std::getline(file, line);   //skip the header
+
+        package_opt::Cones::ConstPtr cones;
+
+        while (not file.eof()) {
+            std::getline(file, line);
+            const auto split_line = split_csv_line(line);
+            assert(split_line.size() == 4);
+            cones.cones_left_x.emplace_back(string_to_double(split_line.at(0)));
+            cones.cones_left_y.emplace_back(string_to_double(split_line.at(1)));
+            cones.cones_right_x.emplace_back(string_to_double(split_line.at(2)));
+            cones.cones_right_y.emplace_back(string_to_double(split_line.at(3)));
+
+        }
+        return cones;
     }
 
 } //namespace package_opt::testing

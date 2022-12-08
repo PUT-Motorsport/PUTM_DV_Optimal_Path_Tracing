@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 
 namespace package_opt::Cones {
   struct ConstPtr{
@@ -29,7 +30,11 @@ namespace ros {
     struct Publisher {
         char placeholder;
         void publish(package_opt::optimal_path const& optimalPath) {
-            (void)optimalPath;
+            std::cout << "Raceline x, Raceline y" << std::endl;
+
+            for (std::size_t iter = 0; iter < optimalPath.optimal_path_x.size(); ++iter) {
+                std::cout << optimalPath.optimal_path_x[iter] << ' ' << optimalPath.optimal_path_y[iter] << std::endl;
+            }
         }
     };
     struct NodeHandle {

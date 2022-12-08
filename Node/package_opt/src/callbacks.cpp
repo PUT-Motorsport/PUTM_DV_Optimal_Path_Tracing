@@ -55,7 +55,7 @@ namespace opt {
         for (std::size_t left_side_iter = 0; left_side_iter < number_of_discretization_points; ++left_side_iter) {
                 double minimal_distance_so_far = std::numeric_limits<double>::max();
                 std::size_t minimal_distance_point_index{};
-                for (std::size_t right_side_iter = std::max<int64_t>(0, left_side_iter - static_cast<int64_t>(opt::config::track_bounds_search_narrowing_heuristic));
+                for (std::size_t right_side_iter = std::max<int64_t>(0, static_cast<int64_t>(left_side_iter) - static_cast<int64_t>(opt::config::track_bounds_search_narrowing_heuristic));
                         right_side_iter < std::min(left_side_iter, left_side_iter + opt::config::track_bounds_search_narrowing_heuristic); ++right_side_iter) {
                                 const auto distance = opt::utility::L2_distance(track_right_x[right_side_iter],
                                                                                  track_left_x[left_side_iter],
