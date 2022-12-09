@@ -8,13 +8,19 @@ The goal of this set of algorithms is to decide the optimal path basing on the t
 **Output:**
 An optimal path spline (*exact representation tbd*).
 
-### Current progress
+## Dependencies
 
-![Current progress](Docs/Images/current_progress.png)
+- eigen
+- boost
 
-### Spline algorithm used
+```
+sudo apt install libeigen3-dev libboost-all-dev libompl-dev
+```
 
-A natural (twice continously differentiable) spline is used. The algorithm is presented [here](http://en.wikipedia.org/w/index.php?title=Spline_%28mathematics%29&oldid=288288033#Algorithm_for_computing_natural_cubic_splines).
+## RRT Alogirthm
+
+RRT implementation [repo](https://github.com/RoboJackets/rrt)
+
 
 ### Raceline
 
