@@ -1,10 +1,11 @@
 #include "callbacks.hpp"
 #include "validity_checker.hpp"
+#include "path.hpp"
 
-#include <ompl-1.5/ompl/base/StateSpace.h>
-#include <ompl-1.5/ompl/base/spaces/RealVectorStateSpace.h>
-#include <ompl-1.5/ompl/base/SpaceInformation.h>
-#include <ompl-1.5/ompl/geometric/planners/rrt/RRTstar.h>
+#include <ompl/base/StateSpace.h>
+#include <ompl/base/spaces/RealVectorStateSpace.h>
+#include <ompl/base/SpaceInformation.h>
+#include <ompl/geometric/planners/rrt/RRTstar.h>
 
 #include <ros/ros.h>
 #include <rosconsole/macros_generated.h>
@@ -66,15 +67,19 @@ void on_cones_received_callback(package_opt::Cones::ConstPtr const &cones) {
 
   const auto states = problem_definition->getSolutionPath()->as<ompl::geometric::PathGeometric>()->getStates();
 
-  std::vector<double> optimal_path_x(states.size());
-  std::vector<double> optimal_path_y(states.size());
+  std::vector<double> rrt_path_x(states.size());
+  std::vector<double> rrt_path_y(states.size());
 
-  for (std::size_t iter = 0; iter < optimal_path_x.size(); ++iter) {
-      optimal_path_x.at(iter) = states.at(iter)->as<ompl::base::RealVectorStateSpace::StateType>()->values[0];
-      optimal_path_y.at(iter) = states.at(iter)->as<ompl::base::RealVectorStateSpace::StateType>()->values[1];
+  for (std::size_t iter = 0; iter < rrt_path_x.size(); ++iter) {
+      rrt_path_x.at(iter) = states.at(iter)->as<ompl::base::RealVectorStateSpace::StateType>()->values[0];
+      rrt_path_y.at(iter) = states.at(iter)->as<ompl::base::RealVectorStateSpace::StateType>()->values[1];
   }
 
-    package_opt::OptimalPath optimalPath{optimal_path_x, optimal_path_y};
+  const auto [smooth_path_x, smooth_path_y] = path::rrt_path_smoothing(rrt_path_x, rrt_path_y);
+
+  package_opt::OptimalPath optimalPath;
+  optimalPath.path_x = std::move(smooth_path_x);
+  optimalPath.path_y = std::move(smooth_path_y);
 
   optimal_path_publisher.publish(optimalPath);
   const auto time_diff = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_time);

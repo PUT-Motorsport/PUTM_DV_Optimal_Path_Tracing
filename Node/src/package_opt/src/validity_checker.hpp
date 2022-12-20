@@ -1,9 +1,9 @@
 #pragma once
 
-#include <ompl-1.5/ompl/base/StateValidityChecker.h>
-#include <ompl-1.5/ompl/base/SpaceInformation.h>
-#include <ompl-1.5/ompl/base/spaces/RealVectorStateSpace.h>
-#include <ompl-1.5/ompl/base/objectives/PathLengthOptimizationObjective.h>
+#include <ompl/base/StateValidityChecker.h>
+#include <ompl/base/SpaceInformation.h>
+#include <ompl/base/spaces/RealVectorStateSpace.h>
+#include <ompl/base/objectives/PathLengthOptimizationObjective.h>
 
 #include "opt_assert.hpp"
 #include "config.hpp"

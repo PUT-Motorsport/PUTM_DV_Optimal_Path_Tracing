@@ -4,7 +4,7 @@ project(package_opt)
 set(CMAKE_CXX_STANDARD_REQUIRED 17)
 set(CMAKE_CXX_STANDARD 17)
 
-add_compile_options(-Wall -Wextra -Weffc++ -pedantic)
+add_compile_options(-Wall -Wextra -pedantic)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -50,9 +50,10 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## Generate messages in the 'msg' folder
  add_message_files(
-   FILES OptimalPath.msg
-   Cones.msg
-
+  FILES 
+  OptimalPath.msg
+  Cones.msg
+  OptimalPath.msg
  )
 
 ## Generate services in the 'srv' folder
@@ -148,9 +149,9 @@ add_executable(${PROJECT_NAME}_node src/main.cpp src/callbacks.cpp src/opt_asser
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(${PROJECT_NAME}_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(${PROJECT_NAME}_node
+  ${catkin_LIBRARIES}
+)
 
 include_directories("/usr/include/ompl-1.5")
 
