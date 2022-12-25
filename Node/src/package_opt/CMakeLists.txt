@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   message_generation
+  visualization_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -136,7 +137,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(${PROJECT_NAME}_node src/main.cpp src/callbacks.cpp src/opt_assert.hpp)
+add_executable(${PROJECT_NAME}_node src/main.cpp src/callbacks.cpp src/opt_assert.hpp src/simulator_wrapper.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

@@ -1,2 +1,2 @@
-float64[] optimal_path_x
-float64[] optimal_path_y
+float64[] path_x
+float64[] path_y
