@@ -12,7 +12,7 @@
 #include <numeric>
 
 /*
-The OMPL must be provided a validity checker, which checks whether a state is valid.
+The OMPL must be provided a validity checker.
 The validity checker is informed about the positons of cones, and checks whether a state intersects with any of them
 */
 namespace opt
@@ -72,7 +72,9 @@ namespace opt
 
     ompl::base::OptimizationObjectivePtr getPathLengthObjective(const ompl::base::SpaceInformationPtr &space_information)
     {
-        return ompl::base::OptimizationObjectivePtr(new ompl::base::PathLengthOptimizationObjective(space_information));
+        ompl::base::OptimizationObjectivePtr objective(new ompl::base::PathLengthOptimizationObjective(space_information));
+        objective->setCostThreshold(ompl::base::Cost(config::track_optimality_threshold));
+        return objective;
     }
     
 } // namespace opt

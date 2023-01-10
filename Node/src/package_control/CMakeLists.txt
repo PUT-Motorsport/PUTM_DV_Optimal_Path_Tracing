@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(package_opt)
+project(package_control)
 
-set(CMAKE_CXX_STANDARD_REQUIRED 17)
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED 17)
 
-add_compile_options(-Wall -Wextra -pedantic)
+ add_compile_options(-Wall -Wextra -pedantic)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -13,7 +13,6 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   message_generation
-  visualization_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -50,12 +49,10 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
- add_message_files(
-  FILES 
-  OptimalPath.msg
-  Cones.msg
-  OptimalPath.msg
- )
+add_message_files(
+  FILES
+  ControlCommand.msg
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -73,8 +70,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
-DEPENDENCIES
-std_msgs
+  DEPENDENCIES
+  std_msgs
 )
 
 ################################################
@@ -108,8 +105,8 @@ std_msgs
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES package_opt
-  CATKIN_DEPENDS roscpp std_msgs message_runtime
+#  LIBRARIES package_control
+  CATKIN_DEPENDS roscpp std_msgs message_runtime package_opt
 #  DEPENDS system_lib
 )
 
@@ -126,7 +123,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/package_opt.cpp
+#   src/${PROJECT_NAME}/package_control.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -137,12 +134,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(${PROJECT_NAME}_node src/main.cpp src/callbacks.cpp src/opt_assert.hpp src/simulator_wrapper.cpp src/spline_interpolation.cpp src/rrt_star.cpp
-  src/Delaunay/delaunay.cpp
-  src/Delaunay/edge.cpp
-  src/Delaunay/triangle.cpp
-  src/Delaunay/vector2.cpp
-)
+add_executable(${PROJECT_NAME}_node src/main.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -152,20 +144,12 @@ add_executable(${PROJECT_NAME}_node src/main.cpp src/callbacks.cpp src/opt_asser
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
 )
-
-include_directories("/usr/include/ompl-1.5")
-
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
-find_package(ompl)
-
-target_link_libraries(package_opt_node Eigen3::Eigen)
-target_link_libraries(package_opt_node ${OMPL_LIBRARIES})
 
 #############
 ## Install ##
@@ -214,7 +198,7 @@ target_link_libraries(package_opt_node ${OMPL_LIBRARIES})
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_package_opt.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_package_control.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
