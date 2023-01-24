@@ -3,9 +3,9 @@
 namespace Control::Config {
 // Longitudinal
 constexpr auto control_loop_frequency = 10; // todo: all values tbd
-constexpr auto Kp = 1.0;
-constexpr auto Ki = 0.01;
-constexpr auto Kd = 0.01;
+constexpr auto Kp = 0.5;
+constexpr auto Ki = 0.1;
+constexpr auto Kd = 0.;
 constexpr auto target_velocity{2.0}; // in m/s
 // Lateral
 constexpr auto lookahead_distance{5.0};

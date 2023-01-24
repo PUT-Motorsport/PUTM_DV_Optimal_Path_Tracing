@@ -159,6 +159,8 @@ target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
 )
 
+target_include_directiories(package_opt_node "../Common")
+
 include_directories("/usr/include/ompl-1.5")
 
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)

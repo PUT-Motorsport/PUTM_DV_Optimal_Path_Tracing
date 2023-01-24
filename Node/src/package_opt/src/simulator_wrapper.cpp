@@ -39,7 +39,8 @@ namespace opt::simulator
         opt::on_cones_received_callback(cones_msg);
     }
 
-    [[maybe_unused]] void visualize_track(package_opt::OptimalPath const &path, std::pair<double, double> goal)
+    [[maybe_unused]] void visualize_track(package_opt::OptimalPath const &path, std::vector<opt::Point<double>> rrt_path, 
+        std::pair<double, double> goal, std::array<double, 3> const& color)
     {
         /*
             Visualize the track in the simulator. Translate arrays of coordinates to markers. 
@@ -68,9 +69,33 @@ namespace opt::simulator
             marker.scale.y = 0.5;
             marker.scale.z = 0.5;
             marker.color.a = 1.0;
-            marker.color.r = 0.0;
-            marker.color.g = 1.0;
+            marker.color.r = 1.0;
+            marker.color.g = 0.0;
             marker.color.b = 0.0;
+            track_visualization_markers.markers.emplace_back(marker);
+        }
+        for(std::size_t iter = 0; iter < rrt_path.size(); ++iter) {
+            visualization_msgs::Marker marker;
+            marker.header.frame_id = "fsds/Lidar";
+            marker.header.stamp = ros::Time::now();
+            marker.ns = "track_visualization";
+            marker.id = path.path_x.size() + iter;
+            marker.type = visualization_msgs::Marker::SPHERE;
+            marker.action = visualization_msgs::Marker::ADD;
+            marker.pose.position.x = rrt_path.at(iter).x;
+            marker.pose.position.y = rrt_path.at(iter).y;
+            marker.pose.position.z = 0.0;
+            marker.pose.orientation.x = 0.0;
+            marker.pose.orientation.y = 0.0;
+            marker.pose.orientation.z = 0.0;
+            marker.pose.orientation.w = 1.0;
+            marker.scale.x = 0.5;
+            marker.scale.y = 0.5;
+            marker.scale.z = 0.5;
+            marker.color.a = 1.0;
+            marker.color.r = 0.;
+            marker.color.g = 0.5;
+            marker.color.b = 0.5;
             track_visualization_markers.markers.emplace_back(marker);
         }
         visualization_msgs::Marker marker;
@@ -94,7 +119,7 @@ namespace opt::simulator
         marker.color.r = 1.0;
         marker.color.g = 0.0;
         marker.color.b = 0.0;
-        track_visualization_markers.markers.emplace_back(marker);
+        // track_visualization_markers.markers.emplace_back(marker);
         track_visualization_publisher.publish(track_visualization_markers);
     }
 

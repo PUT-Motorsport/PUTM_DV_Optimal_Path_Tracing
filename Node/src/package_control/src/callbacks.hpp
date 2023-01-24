@@ -1,6 +1,7 @@
 #pragma once
 
 #include <geometry_msgs/TwistStamped.h>
+#include <package_opt/OptimalPath.h>
 
 namespace Control {
 

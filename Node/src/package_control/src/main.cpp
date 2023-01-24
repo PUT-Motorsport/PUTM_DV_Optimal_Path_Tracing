@@ -16,15 +16,20 @@ int main(int argc, char **argv) {
           "/fsds/control_command", 3);
 
   auto optimal_path_subscriber = node_handle.subscribe(
-      "/optimal_path", 3, Control::path_received_callback);
+      "/OptimalPath", 3, Control::path_received_callback);
 
   ros::Rate control_loop_rate{
       Control::Config::longitudinal_control_loop_frequency};
 
   while (ros::ok()) {
+    static int time = 0;
+    double throttle = 0.0;
+    if (time++ < 20) {
+      throttle = 0.3;
+    }
 
     package_control::ControlCommand control_command{};
-    control_command.throttle = Control::calculate_throttle();
+    control_command.throttle = throttle; //Control::calculate_throttle();
     control_command.steering = Control::calculate_steering_angle();
     control_command.brake = 0.0;
 
