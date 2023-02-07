@@ -24,19 +24,17 @@ get_rrt_path(package_opt::Cones::ConstPtr const &cones) {
   const auto min_y =
       *std::min_element(cones->cones_y.begin(), cones->cones_y.end());
   auto lower_space_bound = (min_x < min_y) ? min_x : min_y;
-  ROS_INFO("Min x: %f y: %f", min_x, min_y);
 
   const auto max_x =
       *std::max_element(cones->cones_x.begin(), cones->cones_x.end());
   const auto max_y =
       *std::max_element(cones->cones_y.begin(), cones->cones_y.end());
   auto upper_space_bound = (max_x > max_y) ? max_x : max_y;
-  ROS_INFO("Max x: %f y: %f", max_x, max_y);
   ROS_INFO("Upper: %f lower %f", upper_space_bound, lower_space_bound);
 
   ompl::base::StateSpacePtr space(new ompl::base::RealVectorStateSpace(2));
-  // this will create a state with bounds [lower_space_bound, upper_space_bound]
-  // in each dimension
+  // this will create a state space with bounds [lower_space_bound,
+  // upper_space_bound] in each dimension
   space->as<ompl::base::RealVectorStateSpace>()->setBounds(lower_space_bound,
                                                            upper_space_bound);
   ompl::base::SpaceInformationPtr space_information(
@@ -53,19 +51,25 @@ get_rrt_path(package_opt::Cones::ConstPtr const &cones) {
   ompl::base::ScopedState goal(space);
   opt_assert(cones->cones_x.size() >= 2);
 
-  // const auto goal_x = (cones->cones_x.at(config::max_cones_horizon) +
-  // cones->cones_x.at(config::max_cones_horizon + 1)) / 2;  //fixme: deciding
-  // goal position: assumptions may not always hold const auto goal_y =
-  // (cones->cones_y.at(config::max_cones_horizon) +
-  // cones->cones_y.at(config::max_cones_horizon + 1)) / 2;
-  opt_assert(cones->cones_x.size() > 11);
-  double goal_x, goal_y;
-  // find the average position of 4 cones at some arbitrary lookahead
-  // fixme: tests only
-  for (std::size_t iter = 7; iter < 10; ++iter) {
-    goal_x += cones->cones_x.at(iter) / 4;
-    goal_y += cones->cones_y.at(iter) / 4;
+  double goal_x{};
+  double goal_y{};
+  std::size_t count{};
+  for (std::size_t iter = 0; iter < cones->cones_x.size(); ++iter) {
+    const auto distance =
+        std::hypot(cones->cones_x.at(iter), cones->cones_y.at(iter));
+    if (distance < config::cone_threshold_high and
+        distance > config::cone_threshold_low) {
+      count++;
+      goal_x += cones->cones_x.at(iter);
+      goal_y += cones->cones_y.at(iter);
+    }
   }
+  opt_assert(goal_y not_eq 0.0);
+  opt_assert(goal_x not_eq 0.0);
+
+  goal_x /= (double)count;
+  goal_y /= (double)count;
+
   goal->as<ompl::base::RealVectorStateSpace::StateType>()->values[0] = goal_x;
   goal->as<ompl::base::RealVectorStateSpace::StateType>()->values[1] = goal_y;
 
@@ -98,10 +102,14 @@ get_rrt_path(package_opt::Cones::ConstPtr const &cones) {
   std::vector<Point<double>> rrt_path;
   rrt_path.reserve(states.size());
   for (std::size_t iter = 0; iter < states.size(); ++iter) {
-    rrt_path.emplace_back(opt::Point<double>{states.at(iter)
-            ->as<ompl::base::RealVectorStateSpace::StateType>()->values[0], 
-            states.at(iter)->as<ompl::base::RealVectorStateSpace::StateType>()->values[1]});
-    }
-    return rrt_path;
+    rrt_path.emplace_back(opt::Point<double>{
+        states.at(iter)
+            ->as<ompl::base::RealVectorStateSpace::StateType>()
+            ->values[0],
+        states.at(iter)
+            ->as<ompl::base::RealVectorStateSpace::StateType>()
+            ->values[1]});
   }
+  return rrt_path;
+}
 } // namespace opt

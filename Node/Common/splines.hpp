@@ -22,8 +22,7 @@ template <typename T> struct SplineFragment {
 
 template <typename T> class NaturalSpline {
 public:
-  explicit /*constexpr*/ NaturalSpline(std::vector<T> const &t,
-                                       std::vector<T> const &y);
+  explicit NaturalSpline(std::vector<T> const &t, std::vector<T> const &y);
 
   [[nodiscard]] constexpr T get_at(T arg) const noexcept;
 
@@ -121,7 +120,7 @@ template <typename T>
 constexpr std::vector<T> NaturalSpline<T>::get_range(T start, T stop,
                                                      T increment) const {
   // the purpose of this function is to optimize generating a range of values by
-  // minimizing the amount of searches needed start is inclusive, stop is
+  // minimizing the amount of searches needed. Start is inclusive, stop is
   // exclusive
   opt_assert(increment > 0);
   opt_assert(start < stop);

@@ -10,7 +10,7 @@ def calculate_distance_point(P1: Tuple[float, float], P2: Tuple[float, float]) -
     return calculate_distance(P1[0], P1[1], P2[0], P2[1])
 
 
-def left_side_perpendicular_vector(x: float, y:float) -> Tuple[float, float]:
+def left_side_perpendicular_vector(x: float, y: float) -> Tuple[float, float]:
     return -y, x
 
 

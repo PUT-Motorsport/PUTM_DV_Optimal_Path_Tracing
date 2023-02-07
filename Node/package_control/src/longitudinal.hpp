@@ -4,7 +4,7 @@
 
 namespace Control {
 
-template <typename T> class PID {
+template <typename T> class [[deprecated]] PID {
 public:
   constexpr explicit PID(T kp, T ki, T kd, T dt);
   constexpr double update(T setpoint, T measurement) noexcept;

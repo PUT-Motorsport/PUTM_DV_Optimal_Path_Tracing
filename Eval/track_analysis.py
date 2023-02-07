@@ -1,5 +1,3 @@
-import numpy as np
-from matplotlib import pyplot as plt
 import pandas as pd
 
 """
@@ -17,3 +15,4 @@ total_track_width = w_l + w_r
 
 print(f'Max track width: {max(total_track_width)}')
 print(f'Min track width: {min(total_track_width)}')
+

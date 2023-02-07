@@ -29,13 +29,13 @@ right_param[0] = 0
 
 for index in range(1, len(left_param)):
     left_param[index] = left_param[index - 1]
-    left_param[index] += math.sqrt((cones_left_x[index] - cones_left_x[index - 1])**2 + \
-        (cones_left_y[index] - cones_left_y[index - 1])**2)
+    left_param[index] += math.sqrt((cones_left_x[index] - cones_left_x[index - 1])**2 +
+                                   (cones_left_y[index] - cones_left_y[index - 1])**2)
 
 for index in range(1, len(right_param)):
     right_param[index] = right_param[index - 1]
-    right_param[index] += math.sqrt((cones_right_x[index] - cones_right_x[index - 1])**2 + \
-        (cones_right_y[index] - cones_right_y[index - 1])**2)
+    right_param[index] += math.sqrt((cones_right_x[index] - cones_right_x[index - 1])**2 +
+                                    (cones_right_y[index] - cones_right_y[index - 1])**2)
 
 right_x_spline = splines.CubicSpline(right_param, cones_right_x)
 right_y_spline = splines.CubicSpline(right_param, cones_right_y)
@@ -67,7 +67,8 @@ t2 = time()
 axis[0, 1].plot(restored_x_left, restored_y_left)
 axis[0, 1].plot(restored_x_right, restored_y_right)
 axis[0, 1].grid()
-axis[0, 1].set_title(f'Restored track sides using L2 distance parameter. {t2 - t1} s')
+axis[0, 1].set_title(
+    f'Restored track sides using L2 distance parameter. {t2 - t1} s')
 
 axis[1, 0].plot(restored_x_left, restored_y_left, color='gray')
 axis[1, 0].plot(restored_x_right, restored_y_right, color='gray')
@@ -76,8 +77,8 @@ axis[1, 1].plot(restored_x_right, restored_y_right, color='gray')
 axis[1, 1].grid()
 # Raceline code...
 
-assert(len(cones_left_x) == len(cones_right_x))
-assert(len(cones_left_y) == len(cones_right_y))
+assert (len(cones_left_x) == len(cones_right_x))
+assert (len(cones_left_y) == len(cones_right_y))
 
 # Assume the centerline lies between two spline points. Interpolate centerline points
 
@@ -85,13 +86,13 @@ assert(len(cones_left_y) == len(cones_right_y))
 
 for index in range(1, len(left_param)):
     left_param[index] = left_param[index - 1]
-    left_param[index] += math.sqrt((cones_left_x[index] - cones_left_x[index - 1])**2 + \
-        (cones_left_y[index] - cones_left_y[index - 1])**2)
+    left_param[index] += math.sqrt((cones_left_x[index] - cones_left_x[index - 1])**2 +
+                                   (cones_left_y[index] - cones_left_y[index - 1])**2)
 
 for index in range(1, len(right_param)):
     right_param[index] = right_param[index - 1]
-    right_param[index] += math.sqrt((cones_right_x[index] - cones_right_x[index - 1])**2 + \
-        (cones_right_y[index] - cones_right_y[index - 1])**2)
+    right_param[index] += math.sqrt((cones_right_x[index] - cones_right_x[index - 1])**2 +
+                                    (cones_right_y[index] - cones_right_y[index - 1])**2)
 
 track_length_increment = int(max(max(left_param), max(right_param))) * 4
 print(track_length_increment)
@@ -103,11 +104,15 @@ centerline_x = np.empty(*left_points.shape)
 centerline_y = np.empty(*right_points.shape)
 
 for index in range(len(centerline_x)):
-    centerline_x[index] = (right_x_spline.get(right_points[index]) + left_x_spline.get(left_points[index])) / 2
-    centerline_y[index] = (right_y_spline.get(right_points[index]) + left_y_spline.get(left_points[index])) / 2
+    centerline_x[index] = (right_x_spline.get(
+        right_points[index]) + left_x_spline.get(left_points[index])) / 2
+    centerline_y[index] = (right_y_spline.get(
+        right_points[index]) + left_y_spline.get(left_points[index])) / 2
     if not index % 50:
-        x_arr = [right_x_spline.get(right_points[index]), left_x_spline.get(left_points[index])]
-        y_arr = [right_y_spline.get(right_points[index]), left_y_spline.get(left_points[index])]
+        x_arr = [right_x_spline.get(
+            right_points[index]), left_x_spline.get(left_points[index])]
+        y_arr = [right_y_spline.get(
+            right_points[index]), left_y_spline.get(left_points[index])]
         axis[1, 0].plot(x_arr, y_arr)
 
 
@@ -119,30 +124,35 @@ axis[1, 0].grid()
 centerline_x_triangles = np.empty(*left_points.shape)
 centerline_y_triangles = np.empty(*right_points.shape)
 
-assert(len(centerline_x_triangles) == len(centerline_y_triangles))
+assert (len(centerline_x_triangles) == len(centerline_y_triangles))
 
 interval = 50
 
 for index in range(len(centerline_x)):
-    Pa = (right_x_spline.get(right_points[index]), right_y_spline.get(right_points[index]))
-    Pb = (right_x_spline.get(right_points[index - interval]), right_y_spline.get(right_points[index - interval]))
-    Pc = (left_x_spline.get(left_points[index]), left_y_spline.get(left_points[index]))
-    assert(Pa != Pb)
-    assert(Pa != Pc)
-    assert(Pb != Pc)
-    tangent_x_Pc = left_x_spline.get(left_points[index]) - left_x_spline.get(left_points[index - 1]) / (track_length_increment)
-    tangent_y_Pc = left_y_spline.get(left_points[index]) - left_x_spline.get(left_points[index - 1]) / track_length_increment
+    Pa = (right_x_spline.get(right_points[index]),
+          right_y_spline.get(right_points[index]))
+    Pb = (right_x_spline.get(right_points[index - interval]),
+          right_y_spline.get(right_points[index - interval]))
+    Pc = (left_x_spline.get(left_points[index]),
+          left_y_spline.get(left_points[index]))
+    assert (Pa != Pb)
+    assert (Pa != Pc)
+    assert (Pb != Pc)
+    tangent_x_Pc = left_x_spline.get(
+        left_points[index]) - left_x_spline.get(left_points[index - 1]) / (track_length_increment)
+    tangent_y_Pc = left_y_spline.get(
+        left_points[index]) - left_x_spline.get(left_points[index - 1]) / track_length_increment
 
     a_b = math.sqrt((Pa[0] - Pb[0])**2 + (Pa[1] - Pb[1])**2)
     a_c = math.sqrt((Pa[0] - Pc[0])**2 + (Pa[1] - Pc[1])**2)
     b_c = math.sqrt((Pc[0] - Pb[0])**2 + (Pc[1] - Pb[1])**2)
 
     s = 0.5 * (a_b + b_c + a_c)
-    triangle_area = math.sqrt(s * (s - a_b)  * (s - a_c) * (s - b_c))   #Heron's formula
+    triangle_area = math.sqrt(s * (s - a_b) * (s - a_c)
+                              * (s - b_c))  # Heron's formula
 
     track_width_at_Pc = 2 * triangle_area / a_b
     parallel_vector_at_Pc = NotImplemented
-
 
     if not index % 50:
         plt.plot([Pa[0], Pb[0]], [Pa[1], Pb[1]], color='black')
@@ -150,3 +160,4 @@ for index in range(len(centerline_x)):
         plt.plot([Pa[0], Pc[0]], [Pa[1], Pc[1]], color='black')
 
 plt.show()
+

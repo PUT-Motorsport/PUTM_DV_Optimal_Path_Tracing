@@ -122,6 +122,7 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
+  "../Common"
 )
 
 ## Declare a C++ library
@@ -137,7 +138,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(${PROJECT_NAME}_node src/main.cpp src/callbacks.cpp src/opt_assert.hpp src/simulator_wrapper.cpp src/spline_interpolation.cpp src/rrt_star.cpp
+add_executable(${PROJECT_NAME}_node src/main.cpp src/callbacks.cpp src/simulator_wrapper.cpp src/rrt_star.cpp
   src/Delaunay/delaunay.cpp
   src/Delaunay/edge.cpp
   src/Delaunay/triangle.cpp
@@ -158,8 +159,6 @@ add_executable(${PROJECT_NAME}_node src/main.cpp src/callbacks.cpp src/opt_asser
 target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
 )
-
-target_include_directiories(package_opt_node "../Common")
 
 include_directories("/usr/include/ompl-1.5")
 

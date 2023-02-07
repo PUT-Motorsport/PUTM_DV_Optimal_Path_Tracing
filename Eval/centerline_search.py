@@ -24,12 +24,12 @@ def get_centerline():
     # calculate L2 distance as a parameter
     for index in range(1, len(left_param)):
         left_param[index] = left_param[index - 1]
-        left_param[index] += math.sqrt((cones_left_x[index] - cones_left_x[index - 1]) ** 2 + \
+        left_param[index] += math.sqrt((cones_left_x[index] - cones_left_x[index - 1]) ** 2 +
                                        (cones_left_y[index] - cones_left_y[index - 1]) ** 2)
 
     for index in range(1, len(right_param)):
         right_param[index] = right_param[index - 1]
-        right_param[index] += math.sqrt((cones_right_x[index] - cones_right_x[index - 1]) ** 2 + \
+        right_param[index] += math.sqrt((cones_right_x[index] - cones_right_x[index - 1]) ** 2 +
                                         (cones_right_y[index] - cones_right_y[index - 1]) ** 2)
 
     # calculate parametric splines
@@ -48,8 +48,6 @@ def get_centerline():
 
     print(f'Spline interpolation took {time() - t1} s')
 
-    midpoint_search_time = time()
-
     discarding_ratio = 1
     searched_left_x = restored_x_left[::discarding_ratio]
     searched_left_y = restored_y_left[::discarding_ratio]
@@ -63,19 +61,21 @@ def get_centerline():
 
     assert (len(searched_left_x) == len(searched_right_y))
 
+    minimal_distance = 100000
     for index in range(len(searched_right_x)):
-        minimal_distance = 100000
         minimal_index = -1
 
-        for left_point in range(len(searched_left_x)):
+        for _ in range(len(searched_left_x)):
             if utility_fncs.calculate_distance(searched_right_x[index], searched_right_x[index], searched_left_x[index],
                                                searched_left_y[index]) < minimal_distance:
                 minimal_index = index
         centerline_track_width_right[index] = minimal_distance / 2
         centerline_track_width_left[index] = minimal_distance / 2
 
-        centerline_x[index] = (searched_right_x[index] + searched_left_x[minimal_index]) / 2
-        centerline_y[index] = (searched_right_y[index] + searched_left_y[minimal_index]) / 2
+        centerline_x[index] = (searched_right_x[index] +
+                               searched_left_x[minimal_index]) / 2
+        centerline_y[index] = (searched_right_y[index] +
+                               searched_left_y[minimal_index]) / 2
 
     return centerline_x, centerline_y, centerline_track_width_left, centerline_track_width_right
 
