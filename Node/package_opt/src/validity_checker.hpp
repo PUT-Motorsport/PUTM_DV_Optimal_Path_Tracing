@@ -5,11 +5,11 @@
 #include <ompl/base/objectives/PathLengthOptimizationObjective.h>
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 
-#include "config.hpp"
-#include "opt_assert.hpp"
-
 #include <cmath>
 #include <numeric>
+
+#include "config.hpp"
+#include "opt_assert.hpp"
 
 /*
 The OMPL must be provided a validity checker.
@@ -18,8 +18,9 @@ a state intersects with any of them
 */
 namespace opt {
 
-template <typename T> class Obstacle2D {
-public:
+template <typename T>
+class Obstacle2D {
+ public:
   explicit constexpr Obstacle2D() = default;
   virtual ~Obstacle2D() = default;
   virtual T clearance(T x, T) const = 0;
@@ -27,7 +28,7 @@ public:
 
 template <typename T>
 class ValidityChecker : public ompl::base::StateValidityChecker {
-public:
+ public:
   explicit ValidityChecker(
       const ompl::base::SpaceInformationPtr &space_information)
       : ompl::base::StateValidityChecker(space_information), obstacles() {
@@ -46,8 +47,8 @@ public:
   [[nodiscard]] bool isValid(const ompl::base::State *state) const override {
     return this->clearance(state) > 0.0;
   }
-  [[nodiscard]] double
-  clearance(const ompl::base::State *state) const override {
+  [[nodiscard]] double clearance(
+      const ompl::base::State *state) const override {
     const auto x_pos =
         state->as<ompl::base::RealVectorStateSpace::StateType>()->values[0];
     const auto y_pos =
@@ -65,7 +66,7 @@ public:
     return lowest_clearance - config::cone_radius;
   }
 
-private:
+ private:
   package_opt::Cones::ConstPtr obstacles;
 };
 
@@ -78,4 +79,4 @@ ompl::base::OptimizationObjectivePtr getPathLengthObjective(
   return objective;
 }
 
-} // namespace opt
+}  // namespace opt

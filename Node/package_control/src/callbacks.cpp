@@ -1,9 +1,8 @@
 #include "callbacks.hpp"
 
+#include <package_control/ControlCommand.h>
 #include <ros/console.h>
 #include <ros/ros.h>
-
-#include <package_control/ControlCommand.h>
 
 #include <cmath>
 
@@ -23,14 +22,13 @@ double steering_angle;
 
 bool path_received;
 
-} // namespace
+}  // namespace
 
 namespace Control {
 
 double calculate_steering_angle() noexcept { return steering_angle; }
 
 double calculate_throttle() noexcept {
-
   if (not path_received) {
     return 0.0;
   }
@@ -49,8 +47,8 @@ void path_received_callback(
   std::optional angle_opt = pure_pursuit_get_angle<double>(optimal_path);
 
   if (not angle_opt.has_value())
-    return; // if it's not possible to compute the new angle, the prevoius angle
-            // remains
+    return;  // if it's not possible to compute the new angle, the prevoius
+             // angle remains
 
   const auto angle_rad = angle_opt.value();
   const auto angle_deg = opt::utility::rad_to_deg(angle_rad);
@@ -65,4 +63,4 @@ void vehicle_speed_data_received_callback(
   vehicle_velocity = std::sqrt(std::hypot(vehicle_speed_data->twist.linear.x,
                                           vehicle_speed_data->twist.linear.y));
 }
-} // namespace Control
+}  // namespace Control

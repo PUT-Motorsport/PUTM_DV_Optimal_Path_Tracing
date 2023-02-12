@@ -1,12 +1,12 @@
 #pragma once
 
+#include <stdio.h>
+
 #include <optional>
 #include <utility>
 
 #include "Delaunay/edge.h"
 #include "common_defs.hpp"
-
-#include <stdio.h>
 
 namespace opt::utility {
 
@@ -37,4 +37,4 @@ constexpr bool find_intersection_point(dt::Edge<T> const &first_line,
   return false;
 }
 
-} // namespace opt::utility
+}  // namespace opt::utility

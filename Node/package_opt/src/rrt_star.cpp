@@ -5,18 +5,16 @@
 #include <ompl/base/spaces/RealVectorStateSpace.h>
 #include <ompl/geometric/planners/rrt/BiTRRT.h>
 #include <ompl/geometric/planners/rrt/RRTstar.h>
-
 #include <ros/ros.h>
 #include <rosconsole/macros_generated.h>
 
 #include "config.hpp"
-#include "path.hpp"
 #include "validity_checker.hpp"
 
 namespace opt {
 
-std::vector<opt::Point<double>>
-get_rrt_path(package_opt::Cones::ConstPtr const &cones) {
+[[deprecated]] std::vector<opt::Point<double>> get_rrt_path(
+    package_opt::Cones::ConstPtr const &cones) {
   opt_assert(cones->cones_x.size() == cones->cones_y.size());
 
   const auto min_x =
@@ -46,7 +44,7 @@ get_rrt_path(package_opt::Cones::ConstPtr const &cones) {
 
   ompl::base::ScopedState start(space);
   start->as<ompl::base::RealVectorStateSpace::StateType>()->values[0] =
-      0.0; // todo: will break after shifting to global coordinates
+      0.0;  // todo: will break after shifting to global coordinates
   start->as<ompl::base::RealVectorStateSpace::StateType>()->values[1] = 0.0;
   ompl::base::ScopedState goal(space);
   opt_assert(cones->cones_x.size() >= 2);
@@ -89,9 +87,10 @@ get_rrt_path(package_opt::Cones::ConstPtr const &cones) {
       planner->solve(config::max_calculation_time);
 
   if (not solved) {
-    ROS_INFO("Optimal path tracing package failed to solve for RRT* path in "
-             "its time quanta of %f",
-             config::max_calculation_time);
+    ROS_INFO(
+        "Optimal path tracing package failed to solve for RRT* path in "
+        "its time quanta of %f",
+        config::max_calculation_time);
     return std::vector<Point<double>>();
   }
 
@@ -112,4 +111,4 @@ get_rrt_path(package_opt::Cones::ConstPtr const &cones) {
   }
   return rrt_path;
 }
-} // namespace opt
+}  // namespace opt

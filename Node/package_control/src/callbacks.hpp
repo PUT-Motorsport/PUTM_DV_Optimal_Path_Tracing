@@ -12,4 +12,4 @@ void path_received_callback(
     package_opt::OptimalPath::ConstPtr const &optimal_path) noexcept;
 void vehicle_speed_data_received_callback(
     geometry_msgs::TwistStamped::ConstPtr const &vehicle_speed_data) noexcept;
-} // namespace Control
+}  // namespace Control

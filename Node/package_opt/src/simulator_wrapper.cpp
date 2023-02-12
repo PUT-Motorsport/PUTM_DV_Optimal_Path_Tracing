@@ -1,9 +1,10 @@
 #include "simulator_wrapper.hpp"
 
+#include <ros/ros.h>
+
 #include "callbacks.hpp"
 #include "opt_assert.hpp"
 #include "package_opt/Cones.h"
-#include <ros/ros.h>
 
 namespace {
 ros::Publisher track_visualization_publisher;
@@ -19,13 +20,12 @@ namespace opt::simulator {
 
 [[maybe_unused]] void on_cones_received_callback_simulator(
     visualization_msgs::MarkerArray::ConstPtr const &cones) {
-
   /*
       Translate the cones from the simulator to the format used by the optimal
      path tracing package.
   */
 
-  ROS_INFO("Received cones from the simulator"); // sanity check
+  ROS_INFO("Received cones from the simulator");  // sanity check
   package_opt::Cones::Ptr cones_msg(new package_opt::Cones);
   cones_msg->cones_x.reserve(cones->markers.size());
   cones_msg->cones_y.reserve(cones->markers.size());
@@ -124,4 +124,4 @@ namespace opt::simulator {
   track_visualization_publisher.publish(track_visualization_markers);
 }
 
-} // namespace opt::simulator
+}  // namespace opt::simulator

@@ -4,7 +4,6 @@
 #include "numeric.h"
 
 #include <cmath>
-#include <iostream>
 #include <type_traits>
 
 namespace dt {

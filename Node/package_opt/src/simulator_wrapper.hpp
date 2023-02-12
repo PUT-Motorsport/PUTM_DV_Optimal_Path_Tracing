@@ -1,11 +1,12 @@
 #pragma once
 
-#include "common_defs.hpp"
-#include "visualization_msgs/MarkerArray.h"
 #include <package_opt/OptimalPath.h>
 #include <ros/ros.h>
 
-#include <utility> //pair
+#include <utility>  //pair
+
+#include "common_defs.hpp"
+#include "visualization_msgs/MarkerArray.h"
 
 namespace opt::simulator {
 [[maybe_unused]] void simulator_wrapper_init(ros::NodeHandle &node_handle);
@@ -15,4 +16,4 @@ namespace opt::simulator {
                                       std::vector<opt::Point<double>> rrt_path,
                                       std::pair<double, double> goal,
                                       std::array<double, 3> const &color);
-} // namespace opt::simulator
+}  // namespace opt::simulator

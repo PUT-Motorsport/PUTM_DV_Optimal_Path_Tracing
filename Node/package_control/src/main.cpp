@@ -33,12 +33,11 @@ int main(int argc, char **argv) {
       Control::Config::longitudinal_control_loop_frequency};
 
   while (ros::ok()) {
-
     package_control::ControlCommand control_command{};
     control_command.throttle = Control::calculate_throttle();
     control_command.steering =
         -1 *
-        Control::calculate_steering_angle(); // positive angle is to the right
+        Control::calculate_steering_angle();  // positive angle is to the right
     control_command.brake = 0.0;
 
     control_command_publisher.publish(control_command);

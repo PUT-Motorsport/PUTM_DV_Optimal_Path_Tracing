@@ -1,12 +1,13 @@
 #pragma once
 
-#include "config.hpp"
-#include "math_utility.hpp"
-#include "opt_assert.hpp"
-#include <optional>
 #include <package_opt/OptimalPath.h>
 #include <ros/ros.h>
 
+#include <optional>
+
+#include "config.hpp"
+#include "math_utility.hpp"
+#include "opt_assert.hpp"
 #include "visualization.hpp"
 
 namespace Control {
@@ -20,7 +21,6 @@ template <typename T>
     package_opt::OptimalPath::ConstPtr const &optimal_path) noexcept {
   static_assert(std::is_floating_point_v<T>);
   for (std::size_t iter = 1; iter < optimal_path->path_x.size(); ++iter) {
-
     const T distance = std::hypot(optimal_path->path_x.at(iter),
                                   optimal_path->path_y.at(iter));
 
@@ -28,7 +28,7 @@ template <typename T>
       opt_assert(optimal_path->path_x.size() >= 2);
       const auto x_lookahead =
           (optimal_path->path_x.at(iter) + optimal_path->path_x.at(iter - 1)) /
-          2; // fixme
+          2;  // fixme
       const auto y_lookahead =
           (optimal_path->path_y.at(iter) + optimal_path->path_y.at(iter - 1)) /
           2;
@@ -43,4 +43,4 @@ template <typename T>
   return std::nullopt;
 }
 
-} // namespace Control
+}  // namespace Control

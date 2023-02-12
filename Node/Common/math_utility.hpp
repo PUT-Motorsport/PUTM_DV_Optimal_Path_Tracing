@@ -18,13 +18,15 @@ constexpr bool is_in_range(T range_bound_a, T range_bound_b, T value) noexcept {
          (value < range_bound_a and value > range_bound_b);
 }
 
-template <typename T> constexpr T deg_to_rad(T degrees) noexcept {
+template <typename T>
+constexpr T deg_to_rad(T degrees) noexcept {
   static_assert(std::is_floating_point_v<T>);
   return degrees / 180. * M_PI;
 }
 
-template <typename T> constexpr T rad_to_deg(T radians) noexcept {
+template <typename T>
+constexpr T rad_to_deg(T radians) noexcept {
   static_assert(std::is_floating_point_v<T>);
   return radians / M_PI * 180.;
 }
-} // namespace opt::utility
+}  // namespace opt::utility

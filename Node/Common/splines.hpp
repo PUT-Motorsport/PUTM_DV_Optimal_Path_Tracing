@@ -1,17 +1,19 @@
 #pragma once
 
+#include <ros/ros.h>
+#include <rosconsole/macros_generated.h>
+
 #include <cmath>
 #include <cstdint>
 #include <type_traits>
 #include <vector>
 
 #include "opt_assert.hpp"
-#include <ros/ros.h>
-#include <rosconsole/macros_generated.h>
 
 namespace opt::spline {
 
-template <typename T> struct SplineFragment {
+template <typename T>
+struct SplineFragment {
   T x;
   T a;
   T b;
@@ -20,8 +22,9 @@ template <typename T> struct SplineFragment {
   static_assert(std::is_floating_point_v<T>);
 };
 
-template <typename T> class NaturalSpline {
-public:
+template <typename T>
+class NaturalSpline {
+ public:
   explicit NaturalSpline(std::vector<T> const &t, std::vector<T> const &y);
 
   [[nodiscard]] constexpr T get_at(T arg) const noexcept;
@@ -29,8 +32,8 @@ public:
   [[nodiscard]] constexpr std::vector<T> get_range(T start, T stop,
                                                    T increment) const;
 
-  [[nodiscard]] constexpr std::vector<T>
-  get_n_points(std::size_t points_count) const;
+  [[nodiscard]] constexpr std::vector<T> get_n_points(
+      std::size_t points_count) const;
 
   [[nodiscard]] constexpr T get_derivative_at(T arg) const noexcept;
 
@@ -44,7 +47,7 @@ public:
     return spline_fragments.size();
   }
 
-private:
+ private:
   std::vector<SplineFragment<T>> spline_fragments;
   std::size_t get_index(T arg) const noexcept;
 };
@@ -127,7 +130,7 @@ constexpr std::vector<T> NaturalSpline<T>::get_range(T start, T stop,
   // find starting x: biggest x to satisfy x < arg
 
   const std::size_t required_vector_size{
-      std::ceil((stop - start) / increment)}; // fixme: floor or ceil??
+      std::ceil((stop - start) / increment)};  // fixme: floor or ceil??
   std::vector<T> y_range;
   y_range.reserve(required_vector_size);
   auto spline_index = get_index(start);
@@ -151,8 +154,8 @@ constexpr std::vector<T> NaturalSpline<T>::get_range(T start, T stop,
 }
 
 template <typename T>
-constexpr std::vector<T>
-NaturalSpline<T>::get_n_points(std::size_t points_count) const {
+constexpr std::vector<T> NaturalSpline<T>::get_n_points(
+    std::size_t points_count) const {
   // generate points_count points in the whole spline
   const auto start = spline_fragments[0].x;
   const auto stop = spline_fragments.back().x;
@@ -196,4 +199,4 @@ std::size_t NaturalSpline<T>::get_index(T arg) const noexcept {
   return index;
 }
 
-} // namespace opt::spline
+}  // namespace opt::spline
