@@ -8,8 +8,8 @@ Testing the potential solution of using parametric curves
 """
 
 if __name__ == "__main__":
-    
-    #generate random samples
+
+    # generate random samples
     increments = np.random.rand(30)
     x = np.empty(*increments.shape)
 
@@ -20,7 +20,7 @@ if __name__ == "__main__":
 
     y = np.random.randn(*x.shape) * 4
 
-    #assume parametrisation where t = sample No.
+    # assume parametrisation where t = sample No.
 
     t = np.arange(0, len(x), 1)
 
@@ -47,3 +47,4 @@ if __name__ == "__main__":
     plt.plot(x_plot, y_plot)
 
     plt.show()
+
