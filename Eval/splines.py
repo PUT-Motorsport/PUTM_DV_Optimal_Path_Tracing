@@ -9,7 +9,6 @@ http://en.wikipedia.org/w/index.php?title=Spline_%28mathematics%29&oldid=2882880
 
 from typing import List
 
-
 class CubicSpline:
     def __init__(self, x: List[float], y: List[float]) -> None:
         self.x = x
@@ -53,7 +52,7 @@ class CubicSpline:
         z[n] = 0
         self.c[n] = 0
 
-        for j in range(n - 1, 0, -1):
+        for j in range(n - 1, -1, -1):
             self.c[j] = z[j] - mu[j] * self.c[j + 1]
             self.b[j] = (self.a[j + 1] - self.a[j]) / h[j] - \
                 h[j] * (self.c[j + 1] + 2 * self.c[j]) / 3
@@ -91,31 +90,38 @@ class CubicSpline:
 
 
 if __name__ == '__main__':
-    # generate x with random increments
-
-    increments = np.random.rand(30)
-    x = np.empty(*increments.shape)
-
-    x[0] = 0
-
-    for i in range(1, len(increments)):
-        x[i] = x[i - 1] + increments[i]
-
-    y = np.random.rand(*x.shape) * 4
-
+    # # generate x with random increments
+    #
+    # increments = np.random.rand(30)
+    # x = np.empty(*increments.shape)
+    #
+    # x[0] = 0
+    #
+    # for i in range(1, len(increments)):
+    #     x[i] = x[i - 1] + increments[i]
+    #
+    # y = np.random.rand(*x.shape) * 4
+    #
+    # plt.scatter(x, y)
+    #
+    # spline = CubicSpline(x.tolist(), y.tolist())
+    #
+    xNew = np.arange(0, 1.0, 0.01)
+    # spline_values = np.empty(*xNew.shape)
+    #
+    # for index, item in enumerate(xNew):
+    #     spline_values[index] = spline.get(item)
+    #
+    # spline_val = spline.get_range(xNew)
+    #
+    # plt.plot(xNew, spline_values)
+    # plt.plot(xNew, spline_val)
+    # plt.show()
+    x = np.linspace(0, 1, 5)
+    y = [0.51716988, 0.16154433, 0.16876195, 0.4129143 , 0.88514508]
+    spl = CubicSpline(x, y)
+    print(f"a: {spl.a} \nb: {spl.b} \nc: {spl.c} \nd: {spl.d}")
+    plt.plot(np.arange(0.0, 1.0, 0.01), [0.51717, 0.499577, 0.482016, 0.46452, 0.447121, 0.429852, 0.412744, 0.395831, 0.379145, 0.362718, 0.346582, 0.33077, 0.315314, 0.300247, 0.285601, 0.271408, 0.257702, 0.244513, 0.231875, 0.21982, 0.20838, 0.197588, 0.187476, 0.178076, 0.169422, 0.161544, 0.154467, 0.148178, 0.142652, 0.137869, 0.133805, 0.130437, 0.127744, 0.125702, 0.124288, 0.123482, 0.123258, 0.123596, 0.124472, 0.125865, 0.12775, 0.130106, 0.13291, 0.13614, 0.139772, 0.143785, 0.148156, 0.152861, 0.157879, 0.163187, 0.168762, 0.174587, 0.180667, 0.18701, 0.193627, 0.200528, 0.207721, 0.215217, 0.223026, 0.231156, 0.239618, 0.248422, 0.257576, 0.267091, 0.276976, 0.287241, 0.297896, 0.30895, 0.320413, 0.332294, 0.344604, 0.357351, 0.370547, 0.384199, 0.398318, 0.412914, 0.427992, 0.443536, 0.459527, 0.475946, 0.492774, 0.509991, 0.527577, 0.545513, 0.56378, 0.582358, 0.601228, 0.62037, 0.639765, 0.659393, 0.679235, 0.699272, 0.719484, 0.739851, 0.760354, 0.780975, 0.801692, 0.822487, 0.843341, 0.864233])
     plt.scatter(x, y)
-
-    spline = CubicSpline(x.tolist(), y.tolist())
-
-    xNew = np.arange(0, max(x), 0.01)
-    spline_values = np.empty(*xNew.shape)
-
-    for index, item in enumerate(xNew):
-        spline_values[index] = spline.get(item)
-
-    spline_val = spline.get_range(xNew)
-
-    plt.plot(xNew, spline_values)
-    plt.plot(xNew, spline_val)
+    plt.plot(np.arange(0.0, 1.0, 0.01), spl.get_range(xNew))
     plt.show()
-

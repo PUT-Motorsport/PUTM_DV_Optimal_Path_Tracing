@@ -64,6 +64,14 @@ struct Point {
     y /= scalar;
     return *this;
   }
+
+  constexpr floating_point_t length() noexcept pure_function {
+     return std::hypot(x, y);
+  }
+
+  constexpr Point<floating_point_t> normalized() noexcept pure_function {
+      return *this / this->length;
+  }
 };
 
 template <typename floating_point_t>
