@@ -12,191 +12,100 @@
 
 namespace opt::spline {
 
-template <typename T>
-struct SplineFragment {
-  T x;
-  T a;
-  T b;
-  T c;
-  T d;
-  static_assert(std::is_floating_point_v<T>);
+template<typename T>
+class CubicSpline {
+public:
+    constexpr CubicSpline(std::vector<T> const &x, std::vector<T> const &y) noexcept;
+
+    [[nodiscard]] constexpr T get_at(T arg) noexcept;
+    [[nodiscard]] constexpr std::vector<T> get_range(T start, T stop, T increment) noexcept;
+
+private:
+    std::vector<T> x, a, b, c, d;
+
+    [[nodiscard]] constexpr std::size_t get_index(T arg) noexcept;
 };
 
-template <typename T>
-class NaturalSpline {
- public:
-  explicit NaturalSpline(std::vector<T> const &t, std::vector<T> const &y);
-
-  [[nodiscard]] constexpr T get_at(T arg) const noexcept;
-
-  [[nodiscard]] constexpr std::vector<T> get_range(T start, T stop,
-                                                   T increment) const;
-
-  [[nodiscard]] constexpr std::vector<T> get_n_points(
-      std::size_t points_count) const;
-
-  [[nodiscard]] constexpr T get_derivative_at(T arg) const noexcept;
-
-  [[nodiscard]] constexpr T get_second_derivative_at(T arg) const noexcept;
-
-  const std::vector<SplineFragment<T>> &get_spline_fragments() const {
-    return spline_fragments;
-  }
-
-  [[nodiscard]] constexpr std::size_t size() const noexcept {
-    return spline_fragments.size();
-  }
-
- private:
-  std::vector<SplineFragment<T>> spline_fragments;
-  std::size_t get_index(T arg) const noexcept;
-};
-
-template <typename T>
-// constexpr
-NaturalSpline<T>::NaturalSpline(std::vector<T> const &t,
-                                std::vector<T> const &y)
-    : spline_fragments(t.size() + 1) {
-  // https://en.wikipedia.org/w/index.php?title=Spline_%28mathematics%29&oldid=288288033#Algorithm_for_computing_natural_cubic_splines
-  static_assert(std::is_floating_point_v<T>);
-  opt_assert(t.size() == y.size()) const auto n = t.size() - 1;
-  // spline_fragments.reserve(n + 1);
-
-  for (std::size_t index = 0; index < y.size(); ++index) {
-    spline_fragments[index].a = y[index];
-  }
-  std::vector<T> h(n);
-  for (std::size_t index = 0; index < n; ++index) {
-    h[index] = spline_fragments[index + 1].x - spline_fragments[index].x;
-  }
-  std::vector<T> alpha(n);
-  for (std::size_t index = 1; index < n; ++index) {
-    alpha[index] =
-        3 / h[index] *
-            (spline_fragments.at(index + 1).a - spline_fragments[index].a) -
-        3 / h[index - 1] *
-            (spline_fragments.at(index).a - spline_fragments.at(index - 1).a);
-  }
-
-  std::vector<T> l(n + 1);
-  std::vector<T> mu(n + 1);
-  std::vector<T> z(n + 1);
-  l[0] = 1;
-  mu[0] = 0;
-  z[0] = 0;
-  for (std::size_t index = 1; index < n; ++index) {
-    l[index] =
-        2 * (spline_fragments[index + 1].x - spline_fragments[index - 1].x) -
-        h[index - 1] * mu[index - 1];
-    mu[index] = h[index] / l[index];
-    z[index] = (alpha[index] - h[index - 1] * z[index - 1]) / l[index];
-  }
-  l[n] = 1;
-  z[n] = 0;
-  spline_fragments[n].c = 0;
-
-  for (int32_t index = n - 1; index >= 0; --index) {
-    spline_fragments[index].c =
-        z[index] - mu[index] * spline_fragments[index + 1].c;
-    spline_fragments[index].b =
-        (spline_fragments[index + 1].a - spline_fragments[index].a) / h[index] -
-        h[index] / 3 *
-            (spline_fragments[index + 1].c + 2 * spline_fragments[index].c);
-    spline_fragments[index].d =
-        (spline_fragments[index + 1].c - spline_fragments[index].c) /
-        (3 * h[index]);
-  }
-}
-
-template <typename T>
-constexpr T NaturalSpline<T>::get_at(T arg) const noexcept {
-  const auto index = get_index(arg);
-  const T delta_x{arg - spline_fragments[index].x};
-
-  auto &fragment = spline_fragments[index];
-
-  return fragment.a + fragment.b * delta_x + fragment.c * std::pow(delta_x, 2) +
-         fragment.d * std::pow(delta_x, 2);
-}
-
-template <typename T>
-constexpr std::vector<T> NaturalSpline<T>::get_range(T start, T stop,
-                                                     T increment) const {
-  // the purpose of this function is to optimize generating a range of values by
-  // minimizing the amount of searches needed. Start is inclusive, stop is
-  // exclusive
-  opt_assert(increment > 0);
-  opt_assert(start < stop);
-  // find starting x: biggest x to satisfy x < arg
-
-  const std::size_t required_vector_size{
-      std::ceil((stop - start) / increment)};  // fixme: floor or ceil??
-  std::vector<T> y_range;
-  y_range.reserve(required_vector_size);
-  auto spline_index = get_index(start);
-  while (start < stop) {
-    const T delta_arg{start - spline_fragments[spline_index].x};
-    opt_assert(delta_arg <= 0);
-
-    y_range.emplace_back(
-        spline_fragments[spline_index].d * std::pow(delta_arg, 3) +
-        spline_fragments[spline_index].c * std::pow(delta_arg, 2) +
-        spline_fragments[spline_index].b + delta_arg +
-        spline_fragments[spline_index].a);
-    start += increment;
-    // check if the next spline fragment is now the biggest that start <
-    // spline_fragments
-    if (start > spline_fragments[spline_index + 1].x) {
-      ++spline_index;
+template<typename T>
+constexpr std::vector<T> CubicSpline<T>::get_range(T start, T stop, T increment) noexcept {
+    auto index = get_index(start);
+    const std::size_t space_required = std::floor((stop - start) / increment);
+    std::vector<T> result;
+    result.reserve(space_required);
+    while (start < stop) {
+        const auto diff_x = start - x.at(index);
+        assert(diff_x >= 0.0);
+        result.emplace_back(a.at(index) + b.at(index) * diff_x + c.at(index) * std::pow(diff_x, 2) + d.at(index) * std::pow(diff_x, 3));
+        start += increment;
+        if (start > x.at(index + 1)) {
+           index++; // fixme: out of bounds?
+        }
     }
-  }
-  return y_range;
+    return result;
 }
 
-template <typename T>
-constexpr std::vector<T> NaturalSpline<T>::get_n_points(
-    std::size_t points_count) const {
-  // generate points_count points in the whole spline
-  const auto start = spline_fragments[0].x;
-  const auto stop = spline_fragments.back().x;
-  const auto increment = (stop - start) / points_count;
-  return this->get_range(start, stop, increment);
+template<typename T>
+constexpr std::size_t CubicSpline<T>::get_index(const T arg) noexcept {
+    assert(arg >= x.at(0));
+    assert(arg <= x.back());
+    std::size_t index{};
+    while (x.at(index) < arg) {
+        index++;
+    }
+    return index;
 }
 
-template <typename T>
-constexpr T NaturalSpline<T>::get_derivative_at(T arg) const noexcept {
-  // calculate the derivative at point arg using spline coefficients
-  const auto index = get_index(arg);
-  const T delta_x{arg - spline_fragments[index].x};
 
-  constexpr auto &fragment = spline_fragments[index];
-  return 3 * fragment.d * std::pow(delta_x, 2) + 2 * fragment.c * delta_x +
-         fragment.b;
+template<typename T>
+constexpr
+CubicSpline<T>::CubicSpline(const std::vector<T> &x, const std::vector<T> &y) noexcept : x(x), a(y), b(y.size() - 1),
+                                                                                         c(y.size()),
+                                                                                         d(y.size() - 1) {
+    const std::size_t n = x.size() - 1;
+    assert(n >= 0);
+    assert(x.size() == y.size());
+
+    std::vector<double> h(n);
+    std::vector<double> alpha(n);
+
+    for (std::size_t iter = 0; iter < n; ++iter) {
+        h.at(iter) = x.at(iter + 1) - x.at(iter);
+    }
+    alpha.at(0) = 0;
+    for (std::size_t iter = 1; iter < alpha.size(); ++iter) {
+        alpha.at(iter) = 3 * (a.at(iter + 1) - a.at(iter)) / h.at(iter) -
+                3 / h.at(iter - 1) * (a.at(iter) - a.at(iter - 1));
+    }
+    std::vector<double> l(n + 1);
+    std::vector<double> mu(n + 1);
+    std::vector<double> z(n + 1);
+    l.at(0) = 1;
+    mu.at(0) = 0;
+    z.at(0) = 0;
+
+    for (std::size_t iter = 1; iter < n; ++iter) {
+        l.at(iter) = 2 * (x.at(iter + 1) - x.at(iter - 1)) - h.at(iter - 1) * mu.at(iter - 1);
+        mu.at(iter) = h.at(iter) / l.at(iter);
+
+        z.at(iter) = (alpha.at(iter) - h.at(iter - 1) * z.at(iter - 1)) / l.at(iter);
+    }
+    l.at(n) = 1;
+    z.at(n) = 0;
+    c.at(n) = 0;
+
+    for (int64_t iter = n - 1; iter >= 0; --iter) {
+        c.at(iter) = z.at(iter) - mu.at(iter) * c.at(iter + 1);
+        b.at(iter) = (a.at(iter + 1) - a.at(iter)) / h.at(iter) - h.at(iter) * (c.at(iter + 1) + 2 * c.at(iter)) / 3;
+        d.at(iter) = (c.at(iter + 1) - c.at(iter)) / (3 * h.at(iter));
+    }
 }
 
-template <typename T>
-constexpr T NaturalSpline<T>::get_second_derivative_at(T arg) const noexcept {
-  // calculate the second derivative at point arg using spline coefficients
-  const auto index = get_index(arg);
-  const T delta_x{arg - spline_fragments[index].x};
-
-  constexpr auto &fragment = spline_fragments[index];
-  return 6 * fragment.d * delta_x + 2 * fragment.c;
-}
-
-template <typename T>
-std::size_t NaturalSpline<T>::get_index(T arg) const noexcept {
-  opt_assert(arg >= spline_fragments[0].x);
-  if (arg < spline_fragments[0].x) {
-    ROS_INFO("Assert. x: %f arg: %f", spline_fragments[0].x, arg);
-  }
-  opt_assert(arg <= spline_fragments.back().x);
-  std::size_t index = 0;
-  while (arg < spline_fragments[index].x) {
-    ++index;
-    opt_assert(index < spline_fragments.size());
-  }
-  return index;
+template<typename T>
+[[nodiscard]] constexpr T CubicSpline<T>::get_at(const T arg) noexcept {
+    const auto index = get_index(arg);
+    const auto diff_x = arg - x.at(index);
+    assert(diff_x >= 0);
+    return a.at(index) + b.at(index) * arg + c.at(index) * std::pow(arg, 2) + d.at(index) * std::pow(arg, 3);
 }
 
 }  // namespace opt::spline
