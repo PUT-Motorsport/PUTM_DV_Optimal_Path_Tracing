@@ -47,7 +47,7 @@ void path_received_callback(
   std::optional angle_opt = pure_pursuit_get_angle<double>(optimal_path);
 
   if (not angle_opt.has_value())
-    return;  // if it's not possible to compute the new angle, the prevoius
+    return;  // if it's not possible to compute the new angle, the previous
              // angle remains
 
   const auto angle_rad = angle_opt.value();

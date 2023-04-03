@@ -1,12 +1,10 @@
 #pragma once
 
-#include <ros/ros.h>
-#include <rosconsole/macros_generated.h>
-
 #include <cmath>
 #include <cstdint>
 #include <type_traits>
 #include <vector>
+#include <cassert>
 
 #include "opt_assert.hpp"
 

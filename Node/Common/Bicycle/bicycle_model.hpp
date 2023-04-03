@@ -33,6 +33,22 @@ public:
         return center_of_mass_location;
     }
 
+    [[nodiscard]] opt::Point<double> get_front_axle_location() const noexcept {
+       const Vector2D front_axle_direction = Vector2D{std::cos(heading), std::sin(heading)}.normalized();
+
+       return center_of_mass_location + front_axle_direction * distance_front;
+    }
+
+    [[nodiscard]] opt::Point<double> get_rear_axle_location() const noexcept {
+        const Vector2D rear_axle_direction = Vector2D{std::cos(heading), std::sin(heading)}.normalized();
+
+        return center_of_mass_location + rear_axle_direction * -distance_front;
+    }
+
+    [[nodiscard]] double get_heading() const noexcept {
+        return heading;
+    }
+
 private:
     double heading;
     PointD center_of_mass_location;

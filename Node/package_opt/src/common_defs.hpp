@@ -37,6 +37,11 @@ struct Point {
     return Point<floating_point_t>{x * scalar, y * scalar};
   }
 
+  constexpr Point<floating_point_t> operator/(
+          floating_point_t scalar) const noexcept pure_function {
+      return Point<floating_point_t>{x / scalar, y / scalar};
+  }
+
   constexpr Point<floating_point_t> operator+=(
       Point<floating_point_t> const &b) noexcept pure_function {
     x += b.x;
@@ -65,12 +70,16 @@ struct Point {
     return *this;
   }
 
-  constexpr floating_point_t length() noexcept pure_function {
+  constexpr floating_point_t length() const noexcept pure_function {
      return std::hypot(x, y);
   }
 
   constexpr Point<floating_point_t> normalized() noexcept pure_function {
-      return *this / this->length;
+      return *this / this->length();
+  }
+
+  constexpr floating_point_t dot(Point<floating_point_t> const &rhs) const noexcept pure_function {
+      return x * rhs.x + y * rhs.y;
   }
 };
 

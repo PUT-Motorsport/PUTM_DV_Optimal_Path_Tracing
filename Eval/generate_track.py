@@ -36,7 +36,7 @@ def generate():
 
         if x_middle[(index + 1) % len(x_middle)] != x_middle[index]:
             derivative = (y_middle[(index + 1) % len(y_middle)] - y_middle[index]) / (
-                x_middle[(index + 1) % len(x_middle)] - x_middle[index])
+                    x_middle[(index + 1) % len(x_middle)] - x_middle[index])
         else:
             from sys import float_info
             derivative = float_info.max
@@ -45,24 +45,24 @@ def generate():
 
         # from delta y / delta x = parallel slope
         from math import sqrt
-        delta_X = sqrt((left_offset[index])**2 / (1 + parallel_slope**2))
+        delta_X = sqrt((left_offset[index]) ** 2 / (1 + parallel_slope ** 2))
         x_left[index] = x_middle[index] - delta_X
         y_left[index] = y_middle[index] - delta_X * parallel_slope
 
-        delta_X = sqrt((right_offset[index])**2 / (1 + parallel_slope**2))
+        delta_X = sqrt((right_offset[index]) ** 2 / (1 + parallel_slope ** 2))
         x_right[index] = x_middle[index] + delta_X
         y_right[index] = y_middle[index] + delta_X * parallel_slope
 
         # fix switched sides
 
         tangent_vector = np.array([x_middle[(index + 1) % len(x_middle)] - x_middle[index],
-                                  (y_middle[(index + 1) % len(x_middle)] - y_middle[index])])
+                                   (y_middle[(index + 1) % len(x_middle)] - y_middle[index])])
         right_vector = np.array(
             [x_right[index] - x_middle[index], y_right[index] - y_middle[index]])
 
         cross = np.cross(right_vector, tangent_vector)
 
-        if (cross < 0):     # cross product negative, points must be switched
+        if (cross < 0):  # cross product negative, points must be switched
             x_left[index], x_right[index] = x_right[index], x_left[index]
             y_left[index], y_right[index] = y_right[index], y_left[index]
 
@@ -91,3 +91,14 @@ def get_track_centerline():
     df = pd.read_csv(getcwd() + '/tracks/berlin_2018.csv')
 
     return [df['x_m'].to_numpy(), df['y_m'].to_numpy()]
+
+
+if __name__ == "__main__":
+    import csv
+
+    x, y = get_track_centerline()
+    with open('track.csv', mode='w') as csv_file:
+        writer = csv.writer(csv_file)
+
+        for row in zip(x, y):
+            writer.writerow(row)
